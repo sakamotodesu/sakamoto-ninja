@@ -28,7 +28,6 @@ resource "aws_route53_record" "sakamoto-ninja-record" {
   }
 }
 
-
 resource "aws_acm_certificate" "sakamoto-ninja-acm" {
   domain_name               = data.aws_route53_zone.sakamoto-ninja-zone.name
   subject_alternative_names = []
@@ -49,23 +48,24 @@ resource "aws_s3_bucket" "sakamoto-ninja-site" {
 
 resource "aws_s3_bucket_policy" "sakamoto-ninja-site" {
   bucket = aws_s3_bucket.sakamoto-ninja-site.id
-  policy = <<POLICY
-{
-      "Version": "2008-10-17",
-      "Id": "PolicyForCloudFrontPrivateContent",
-      "Statement": [
-        {
-          "Action": "s3:GetObject",
-          "Effect": "Allow",
-          "Principal": {
-            "AWS": "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity E3IV1OXM4JCTPO"
-          },
-          "Resource": "arn:aws:s3:::sakamoto-ninja-site/*",
-          "Sid": "1"
-        }
-      ]
+  policy = data.aws_iam_policy_document.sakamoto-ninja-site.json
+}
+
+data "aws_iam_policy_document" "sakamoto-ninja-site" {
+  policy_id = "PolicyForCloudFrontPrivateContent"
+  version   = "2012-10-17"
+  statement {
+    actions = [
+    "s3:GetObject"]
+    resources = [
+    "${aws_s3_bucket.sakamoto-ninja-site.arn}/*"]
+    sid = "1"
+    principals {
+      type = "AWS"
+      identifiers = [
+      "${aws_cloudfront_origin_access_identity.sakamoto-ninja-site.iam_arn}"]
     }
-POLICY
+  }
 }
 
 locals {
@@ -118,7 +118,7 @@ resource "aws_cloudfront_distribution" "sakamoto-ninja-site" {
     origin_id   = local.s3_origin_id
 
     s3_origin_config {
-      origin_access_identity = "origin-access-identity/cloudfront/E3IV1OXM4JCTPO"
+      origin_access_identity = aws_cloudfront_origin_access_identity.sakamoto-ninja-site.cloudfront_access_identity_path
     }
   }
 
@@ -136,3 +136,8 @@ resource "aws_cloudfront_distribution" "sakamoto-ninja-site" {
     ssl_support_method             = "sni-only"
   }
 }
+
+resource "aws_cloudfront_origin_access_identity" "sakamoto-ninja-site" {
+  comment = "sakamoto-ninja-site"
+}
+
