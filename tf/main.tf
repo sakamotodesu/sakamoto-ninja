@@ -44,6 +44,9 @@ resource "aws_s3_bucket" "sakamoto-ninja-site" {
   acl           = "private"
   bucket        = "sakamoto-ninja-site"
   force_destroy = false
+  tags = {
+    "Service" = "sakamoto-ninja"
+  }
 }
 
 resource "aws_s3_bucket_policy" "sakamoto-ninja-site" {
@@ -80,7 +83,9 @@ resource "aws_cloudfront_distribution" "sakamoto-ninja-site" {
   is_ipv6_enabled     = true
   price_class         = "PriceClass_All"
   retain_on_delete    = false
-  tags                = {}
+  tags = {
+    Service = "sakamoto-ninja"
+  }
   wait_for_deployment = true
 
   default_cache_behavior {
@@ -135,6 +140,7 @@ resource "aws_cloudfront_distribution" "sakamoto-ninja-site" {
     minimum_protocol_version       = "TLSv1.2_2018"
     ssl_support_method             = "sni-only"
   }
+
 }
 
 resource "aws_cloudfront_origin_access_identity" "sakamoto-ninja-site" {
