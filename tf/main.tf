@@ -69,6 +69,26 @@ data "aws_iam_policy_document" "sakamoto-ninja-site" {
       "${aws_cloudfront_origin_access_identity.sakamoto-ninja-site.iam_arn}"]
     }
   }
+
+  statement {
+    actions = [
+      "s3:DeleteObject",
+      "s3:GetObject",
+      "s3:ListBucket",
+      "s3:PutObject",
+    ]
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::616703994274:user/sakamoto"]
+    }
+    resources = [
+      "arn:aws:s3:::sakamoto-ninja-site",
+      "arn:aws:s3:::sakamoto-ninja-site/*",
+    ]
+    sid = "Stmt1592734946466"
+
+  }
 }
 
 locals {
