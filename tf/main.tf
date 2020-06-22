@@ -13,12 +13,12 @@ provider "aws" {
   region = "us-east-1"
 }
 
-data "aws_route53_zone" "sakamoto-ninja-zone" {
+data "aws_route53_zone" "sakamoto-ninja" {
   name = "sakamoto.ninja"
 }
 
 resource "aws_route53_record" "sakamoto-ninja-record" {
-  zone_id = data.aws_route53_zone.sakamoto-ninja-zone.zone_id
+  zone_id = data.aws_route53_zone.sakamoto-ninja.zone_id
   name    = "sakamoto.ninja"
   type    = "A"
   alias {
@@ -29,7 +29,7 @@ resource "aws_route53_record" "sakamoto-ninja-record" {
 }
 
 resource "aws_acm_certificate" "sakamoto-ninja-acm" {
-  domain_name               = data.aws_route53_zone.sakamoto-ninja-zone.name
+  domain_name               = data.aws_route53_zone.sakamoto-ninja.name
   subject_alternative_names = []
   validation_method         = "DNS"
   lifecycle {
@@ -54,6 +54,10 @@ resource "aws_s3_bucket_policy" "sakamoto-ninja-site" {
   policy = data.aws_iam_policy_document.sakamoto-ninja-site.json
 }
 
+data "aws_iam_user" "sakamoto" {
+  user_name = "sakamoto"
+}
+
 data "aws_iam_policy_document" "sakamoto-ninja-site" {
   policy_id = "PolicyForCloudFrontPrivateContent"
   version   = "2012-10-17"
@@ -66,7 +70,7 @@ data "aws_iam_policy_document" "sakamoto-ninja-site" {
     principals {
       type = "AWS"
       identifiers = [
-      "${aws_cloudfront_origin_access_identity.sakamoto-ninja-site.iam_arn}"]
+      aws_cloudfront_origin_access_identity.sakamoto-ninja-site.iam_arn]
     }
   }
 
@@ -79,12 +83,13 @@ data "aws_iam_policy_document" "sakamoto-ninja-site" {
     ]
     effect = "Allow"
     principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::616703994274:user/sakamoto"]
+      type = "AWS"
+      identifiers = [
+      data.aws_iam_user.sakamoto.arn]
     }
     resources = [
-      "arn:aws:s3:::sakamoto-ninja-site",
-      "arn:aws:s3:::sakamoto-ninja-site/*",
+      aws_s3_bucket.sakamoto-ninja-site.arn,
+      "${aws_s3_bucket.sakamoto-ninja-site.arn}/*",
     ]
     sid = "Stmt1592734946466"
 
