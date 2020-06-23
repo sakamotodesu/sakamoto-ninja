@@ -81,7 +81,7 @@ data "aws_iam_policy_document" "sakamoto-ninja-site" {
     principals {
       type = "AWS"
       identifiers = [
-        data.aws_iam_user.sakamoto.arn]
+        aws_iam_user.sakamoto-ninja-s3-update.arn]
     }
     resources = [
       aws_s3_bucket.sakamoto-ninja-site.arn,
