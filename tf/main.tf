@@ -4,13 +4,6 @@ terraform {
     key    = "terraform.tfstate"
     region = "ap-northeast-1"
   }
-  required_version = "= 0.13.5"
-}
-
-provider "aws" {
-  version = "= 2.52.0"
-  // ACMがus-east-1 にないとCloudFrontのカスタムドメインに設定できない。
-  region = "us-east-1"
 }
 
 data "aws_route53_zone" "sakamoto-ninja" {
