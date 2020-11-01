@@ -10,8 +10,8 @@ resource "aws_iam_user" "sakamoto-ninja-s3-update" {
 }
 
 resource "aws_iam_user_policy" "sakamoto-ninja-s3-update-policy" {
-  name = "sakamoto-ninja-s3-policy"
-  user = aws_iam_user.sakamoto-ninja-s3-update.name
+  name   = "sakamoto-ninja-s3-policy"
+  user   = aws_iam_user.sakamoto-ninja-s3-update.name
   policy = data.aws_iam_policy_document.sakamoto-ninja-s3-update.json
 }
 

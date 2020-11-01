@@ -56,17 +56,17 @@ resource "aws_s3_bucket_policy" "sakamoto-ninja-site" {
 
 data "aws_iam_policy_document" "sakamoto-ninja-site" {
   policy_id = "PolicyForCloudFrontPrivateContent"
-  version = "2012-10-17"
+  version   = "2012-10-17"
   statement {
     actions = [
-      "s3:GetObject"]
+    "s3:GetObject"]
     resources = [
-      "${aws_s3_bucket.sakamoto-ninja-site.arn}/*"]
+    "${aws_s3_bucket.sakamoto-ninja-site.arn}/*"]
     sid = "1"
     principals {
       type = "AWS"
       identifiers = [
-        aws_cloudfront_origin_access_identity.sakamoto-ninja-site.iam_arn]
+      aws_cloudfront_origin_access_identity.sakamoto-ninja-site.iam_arn]
     }
   }
 
@@ -81,7 +81,7 @@ data "aws_iam_policy_document" "sakamoto-ninja-site" {
     principals {
       type = "AWS"
       identifiers = [
-        aws_iam_user.sakamoto-ninja-s3-update.arn]
+      aws_iam_user.sakamoto-ninja-s3-update.arn]
     }
     resources = [
       aws_s3_bucket.sakamoto-ninja-site.arn,
