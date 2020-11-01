@@ -4,7 +4,7 @@ terraform {
     key    = "terraform.tfstate"
     region = "ap-northeast-1"
   }
-  required_version = "= 0.12.23"
+  required_version = "= 0.13.5"
 }
 
 provider "aws" {
